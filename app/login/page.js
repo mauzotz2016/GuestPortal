@@ -6,8 +6,12 @@ export default function Login() {
   const [email, setEmail] = useState(''), [password, setPassword] = useState(''), [err, setErr] = useState(''), [busy, setBusy] = useState(false)
   async function submit(e) {
     e.preventDefault(); setBusy(true); setErr('')
-    const { error } = await sbBrowser().auth.signInWithPassword({ email, password })
-    if (error) { setErr('Email au password si sahihi.'); setBusy(false) } else window.location.href = '/'
+    try {
+      const { error } = await sbBrowser().auth.signInWithPassword({ email: email.trim(), password })
+      if (error) { setErr(error.message); setBusy(false) } else window.location.href = '/'
+    } catch (ex) {
+      setErr('Hitilafu ya muunganisho: ' + ex.message); setBusy(false)
+    }
   }
   return (
     <main><form className="card login" onSubmit={submit}>
