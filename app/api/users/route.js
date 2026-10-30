@@ -15,7 +15,7 @@ export async function POST(req) {
   if (profile?.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 })
   const { email, password, full_name, branch } = await req.json()
   if (!email || !full_name || !password || password.length < 8 || !BRANCHES.includes(branch))
-    return Response.json({ error: 'Jaza sehemu zote (password angalau herufi 8).' }, { status: 400 })
+    return Response.json({ error: 'Fill in all fields (password at least 8 characters).' }, { status: 400 })
   const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
   const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true })
   if (error) return Response.json({ error: error.message }, { status: 400 })

@@ -9,7 +9,7 @@ const d = s => s.split('-').reverse().join('.')
 
 export default async function Home({ searchParams }) {
   const { sb, profile } = await currentProfile()
-  if (!profile) return <main><div className="card login"><p>Akaunti yako haina profile. Wasiliana na Admin.</p><LogoutButton /></div></main>
+  if (!profile) return <main><div className="card login"><p>Your account has no profile. Please contact the Admin.</p><LogoutButton /></div></main>
   const admin = profile.role === 'admin'
   const sp = await searchParams
   const year = new Date().getFullYear()
@@ -38,29 +38,29 @@ export default async function Home({ searchParams }) {
   return (<>
     <header>
       <div><h1>Tiffany Guest Registration Portal</h1><small>{profile.full_name}{profile.branch ? ` · ${profile.branch}` : ' · Admin'}</small></div>
-      <nav>{admin && <Link href="/admin/users">Watumiaji</Link>}<LogoutButton /></nav>
+      <nav>{admin && <Link href="/admin/users">Users</Link>}<LogoutButton /></nav>
     </header>
     <main>
       {admin && <div className="grid" style={{ marginBottom: 16 }}>
-        <div className="card stat"><b>{perBranch.reduce((a, [, c]) => a + c, 0)}</b><span>Wageni wote (kipindi)</span></div>
+        <div className="card stat"><b>{perBranch.reduce((a, [, c]) => a + c, 0)}</b><span>Total guests (period)</span></div>
         {perBranch.map(([b, c]) => <div className="card stat" key={b}><b>{c}</b><span>{b}</span></div>)}
       </div>}
       {!admin && <RegisterForm branch={profile.branch} />}
       <div className="card">
-        <h2>{admin ? 'Wageni — Branch Zote' : `Wageni wa ${profile.branch}`}</h2>
+        <h2>{admin ? 'Guests — All Branches' : `${profile.branch} Guests`}</h2>
         <form className="row" style={{ marginBottom: 12 }}>
-          <div><label>Kuanzia</label><input type="date" name="from" defaultValue={from} /></div>
-          <div><label>Hadi</label><input type="date" name="to" defaultValue={to} /></div>
-          {admin && <div><label>Branch</label><select name="branch" defaultValue={branch}><option value="">Zote</option>{BRANCHES.map(b => <option key={b}>{b}</option>)}</select></div>}
-          <div><label>Tafuta jina</label><input name="q" defaultValue={q} /></div>
-          <div style={{ flex: 0 }}><button>Chuja</button></div>
-          {admin && <div style={{ flex: 0 }}><a className="btn" href={exportUrl}>Pakua CSV</a></div>}
+          <div><label>From</label><input type="date" name="from" defaultValue={from} /></div>
+          <div><label>To</label><input type="date" name="to" defaultValue={to} /></div>
+          {admin && <div><label>Branch</label><select name="branch" defaultValue={branch}><option value="">All</option>{BRANCHES.map(b => <option key={b}>{b}</option>)}</select></div>}
+          <div><label>Search name</label><input name="q" defaultValue={q} /></div>
+          <div style={{ flex: 0 }}><button>Filter</button></div>
+          {admin && <div style={{ flex: 0 }}><a className="btn" href={exportUrl}>Download PDF</a></div>}
         </form>
-        <p className="msg">Jumla: {count ?? 0} {count > 200 && '(zinaonyeshwa 200 za karibuni; CSV ina zote)'}</p>
+        <p className="msg">Total: {count ?? 0} {count > 200 && '(showing latest 200; the PDF contains all)'}</p>
         <div className="wrap"><table>
-          <thead><tr><th>Tarehe ya Usajili</th><th>Jina Kamili</th><th>Nchi</th><th>Kuingia</th><th>Kutoka</th><th>Branch</th><th>User</th></tr></thead>
+          <thead><tr><th>Registration Date</th><th>Full Name</th><th>Country</th><th>Check-in</th><th>Check-out</th><th>Branch</th><th>User</th></tr></thead>
           <tbody>{(rows || []).map(g => <tr key={g.id}><td>{fmt(g.registered_at)}</td><td>{g.full_name}</td><td>{g.country}</td><td>{d(g.check_in)}</td><td>{d(g.check_out)}</td><td>{g.branch}</td><td>{g.user_name}</td></tr>)}
-            {!rows?.length && <tr><td colSpan="7">Hakuna rekodi.</td></tr>}</tbody>
+            {!rows?.length && <tr><td colSpan="7">No records found.</td></tr>}</tbody>
         </table></div>
       </div>
     </main>

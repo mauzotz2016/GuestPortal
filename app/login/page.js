@@ -10,7 +10,7 @@ export default function Login() {
       const { error } = await sbBrowser().auth.signInWithPassword({ email: email.trim(), password })
       if (error) { setErr(error.message); setBusy(false) } else window.location.href = '/'
     } catch (ex) {
-      setErr('Hitilafu ya muunganisho: ' + ex.message); setBusy(false)
+      setErr('Connection error: ' + ex.message); setBusy(false)
     }
   }
   return (
@@ -19,7 +19,7 @@ export default function Login() {
       <label>Email</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
       <label>Password</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
       <p className="msg er">{err}</p>
-      <button disabled={busy}>{busy ? 'Subiri…' : 'Ingia'}</button>
+      <button disabled={busy}>{busy ? 'Please wait…' : 'Sign in'}</button>
     </form></main>
   )
 }
