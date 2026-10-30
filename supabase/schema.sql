@@ -1,4 +1,4 @@
--- Endesha SQL hii yote kwenye Supabase > SQL Editor
+-- Run this entire SQL in Supabase > SQL Editor
 create type role_t as enum ('admin','user');
 
 create table branches (name text primary key);
@@ -14,7 +14,7 @@ create table profiles (
 
 create table guests (
   id uuid primary key default gen_random_uuid(),
-  registered_at timestamptz not null default clock_timestamp() unique, -- tarehe/muda wa usajili haujirudii
+  registered_at timestamptz not null default clock_timestamp() unique, -- registration timestamp is unique
   full_name text not null,
   country text not null,
   check_in date not null,
@@ -40,7 +40,7 @@ create policy "profile read"  on profiles for select to authenticated using (id 
 create policy "guests read"   on guests   for select to authenticated using (is_admin() or branch = my_branch());
 create policy "guests insert" on guests   for insert to authenticated
   with check (branch = my_branch() and user_id = auth.uid());
--- Hakuna policy ya update/delete: rekodi haziwezi kubadilishwa wala kufutwa kupitia app.
+-- No update/delete policy: records cannot be edited or deleted through the app.
 
--- ADMIN WA KWANZA: tengeneza user kwenye Authentication > Users, kisha endesha (badilisha UUID na email):
+-- FIRST ADMIN: create a user in Authentication > Users, then run (change the email):
 -- insert into profiles (id, full_name, role) select id, 'Admin', 'admin' from auth.users where email = 'admin@tiffanydiamondhotels.com';
